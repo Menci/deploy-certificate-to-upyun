@@ -1,0 +1,22 @@
+{
+  "name": "deploy-certificate-to-upyun",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc --target es5 --esModuleInterOp --outDir dist *.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@actions/core": "^1.6.0",
+    "axios": "^0.23.0",
+    "axios-cookiejar-support": "^2.0.3",
+    "tough-cookie": "^4.0.0",
+    "typescript": "^4.4.4"
+  },
+  "devDependencies": {
+    "@types/node": "12"
+  }
+}

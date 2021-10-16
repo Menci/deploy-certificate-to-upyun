@@ -1,0 +1,27 @@
+name: Deploy SSL certificate to Upyun
+description: Deploy SSL certificate to Upyun CDN or OSS.
+branding:
+  icon: lock
+  color: green
+inputs:
+  subaccount-username:
+    description: The subaccount username to login to Upyun.
+    required: true
+  subaccount-password:
+    description: The subaccount password to login to Upyun.
+    required: true
+  fullchain-file:
+    description: The file path of the PEM fullchain certificate.
+    required: true
+  key-file:
+    description: The file path of the PEM private key file.
+    required: true
+  domains:
+    description: Enter a list of CDN or OSS domains you want to deploy the certificate to.
+    required: true
+  delete-unused-certificates:
+    description: Whether or not to delete ALL unused certificates after deploying the new certificate. If set to `false` the old certificate won't be deleted!
+    required: true
+runs:
+  using: node12
+  main: bootstrap.js
