@@ -20,7 +20,7 @@ jobs:
           # If you just commited and pushed your newly issued certificate to this repo in a previous job,
           # use `ref` to make sure checking out the newest commit in this job
           ref: ${{ github.ref }}
-      - uses: Menci/deploy-certificate-to-aliyun@beta-v1
+      - uses: Menci/deploy-certificate-to-aliyun@beta-v2
         with:
           # Subaccount
           subaccount-username: ${{ secrets.UPYUN_SUBACCOUNT_USERNAME }}

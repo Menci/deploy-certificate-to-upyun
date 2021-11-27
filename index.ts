@@ -2,11 +2,7 @@ import fs from "fs";
 import { URL } from "url";
 import * as core from "@actions/core";
 import Axios, { Method } from "axios";
-import { wrapper } from "axios-cookiejar-support";
-import { CookieJar } from "tough-cookie";
-
-const jar = new CookieJar();
-const client = wrapper(Axios.create({ jar }));
+import { Cookie } from "tough-cookie";
 
 const input = {
   subaccountUsername: core.getInput("subaccount-username"),
@@ -17,6 +13,7 @@ const input = {
   deleteUnusedCertificates: core.getBooleanInput("delete-unused-certificates")
 };
 
+const cookies: Record<string, string> = {};
 async function callApi<ResponseData>(url: string, data: Record<string, unknown>, method: Method = "POST") {
   interface UpyunConsoleApiResponse {
     data: ResponseData;
@@ -27,13 +24,22 @@ async function callApi<ResponseData>(url: string, data: Record<string, unknown>,
     user: unknown;
   }
 
-  const result = await client.request({
+  const result = await Axios.request({
+    maxRedirects: 0,
+    validateStatus: () => true,
     method,
     url,
-    data
+    data,
+    headers: {
+      Cookie: Object.values(cookies).join("; ")
+    }
   });
   const response = result.data as UpyunConsoleApiResponse;
-  console.log(`${url}: ${JSON.stringify(response.msg)}`);
+  console.log(`${url}:`, result.status, response);
+
+  const setCookieHeader = result.headers["set-cookie"];
+  const setCookieHeaders = Array.isArray(setCookieHeader) ? setCookieHeader : [setCookieHeader];
+  setCookieHeaders.filter(x => x).map<any>(Cookie.parse).forEach(cookie => cookies[cookie.key] = cookie.cookieString());
 
   return response.data;
 }
