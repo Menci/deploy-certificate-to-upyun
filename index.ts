@@ -1,4 +1,5 @@
 import fs from "fs";
+import https from "https";
 import { URL } from "url";
 import * as core from "@actions/core";
 import Axios, { Method } from "axios";
@@ -32,7 +33,10 @@ async function callApi<ResponseData>(url: string, data: Record<string, unknown>,
     data,
     headers: {
       Cookie: Object.values(cookies).join("; ")
-    }
+    },
+    httpsAgent: new https.Agent({
+      lookup: (_hostname, _options, callback) => callback(null, "101.251.144.15", 4)
+    })
   });
   const response = result.data as UpyunConsoleApiResponse;
   console.log(`${url}:`, result.status, response);
