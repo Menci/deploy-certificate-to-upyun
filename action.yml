@@ -23,5 +23,5 @@ inputs:
     description: Whether or not to delete ALL unused certificates after deploying the new certificate. If set to `false` the old certificate won't be deleted!
     required: true
 runs:
-  using: node12
+  using: node16
   main: bootstrap.js
