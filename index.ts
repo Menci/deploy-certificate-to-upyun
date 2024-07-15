@@ -1,6 +1,8 @@
 import fs from "fs";
 import https from "https";
 import { URL } from "url";
+import type { LookupFunction } from "net";
+
 import * as core from "@actions/core";
 import Axios, { Method } from "axios";
 import { Cookie } from "tough-cookie";
@@ -13,6 +15,13 @@ const input = {
   domains: core.getInput("domains"),
   deleteUnusedCertificates: core.getBooleanInput("delete-unused-certificates")
 };
+
+const overrideLookup = (address: string, family: number): LookupFunction =>
+  (_hostname, options, callback) =>
+    options.all
+    ? // @ts-ignore - callback of `all` is not in the type definition
+      callback(null, [{ address, family }])
+    : callback(null, address, family);
 
 const cookies: Record<string, string> = {};
 async function callApi<ResponseData>(url: string, data: Record<string, unknown>, method: Method = "POST") {
@@ -35,7 +44,7 @@ async function callApi<ResponseData>(url: string, data: Record<string, unknown>,
       Cookie: Object.values(cookies).join("; ")
     },
     httpsAgent: new https.Agent({
-      lookup: (_hostname, _options, callback) => callback(null, "101.251.144.15", 4)
+      lookup: overrideLookup("101.251.144.15", 4)
     })
   });
   const response = result.data as UpyunConsoleApiResponse;
